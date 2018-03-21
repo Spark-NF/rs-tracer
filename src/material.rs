@@ -1,5 +1,6 @@
 use Color;
 
+#[derive(Serialize, Deserialize)]
 pub enum SurfaceType {
     Diffuse,
     Reflective {
@@ -7,6 +8,7 @@ pub enum SurfaceType {
     },
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Material {
     pub reflection: f32,
     pub color: Color,

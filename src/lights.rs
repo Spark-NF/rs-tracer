@@ -1,18 +1,21 @@
 use Color;
 use Vector3;
 
+#[derive(Serialize, Deserialize)]
 pub struct DirectionalLight {
     pub direction: Vector3,
     pub color: Color,
     pub intensity: f32,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct PointLight {
     pub position: Vector3,
     pub color: Color,
     pub intensity: f32,
 }
 
+#[derive(Serialize, Deserialize)]
 pub enum Light {
     DirectionalLight(DirectionalLight),
     PointLight(PointLight),

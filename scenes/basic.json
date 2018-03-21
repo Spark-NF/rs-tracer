@@ -1,0 +1,110 @@
+{
+    "width": 600,
+    "height": 600,
+    "lights": [{
+        "DirectionalLight": {
+            "direction": {
+                "x": -0.30151135,
+                "y": 0.904534,
+                "z": -0.30151135
+            },
+            "color": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0
+            },
+            "intensity": 0.8
+        }
+    }, {
+        "DirectionalLight": {
+            "direction": {
+                "x": 0.30151135,
+                "y": 0.904534,
+                "z": -0.30151135
+            },
+            "color": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0
+            },
+            "intensity": 0.8
+        }
+    }, {
+        "PointLight": {
+            "position": {
+                "x": 0.5,
+                "y": 1.0,
+                "z": -1.0
+            },
+            "color": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 0.0
+            },
+            "intensity": 2.0
+        }
+    }],
+    "items": [{
+        "Sphere": {
+            "radius": 0.3,
+            "center": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": -1.0
+            },
+            "material": {
+                "reflection": 1.0,
+                "color": {
+                    "r": 0.0,
+                    "g": 1.0,
+                    "b": 0.0
+                },
+                "surface": "Diffuse"
+            }
+        }
+    }, {
+        "Sphere": {
+            "radius": 1.0,
+            "center": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": -2.0
+            },
+            "material": {
+                "reflection": 0.8,
+                "color": {
+                    "r": 1.0,
+                    "g": 0.0,
+                    "b": 0.0
+                },
+                "surface": {
+                    "Reflective": {
+                        "reflectivity": 0.5
+                    }
+                }
+            }
+        }
+    }, {
+        "Plane": {
+            "point": {
+                "x": 0.0,
+                "y": 1.5,
+                "z": 0.0
+            },
+            "normal": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "material": {
+                "reflection": 0.5,
+                "color": {
+                    "r": 0.0,
+                    "g": 0.0,
+                    "b": 1.0
+                },
+                "surface": "Diffuse"
+            }
+        }
+    }]
+}

@@ -2,18 +2,21 @@ use Material;
 use Ray;
 use Vector3;
 
+#[derive(Serialize, Deserialize)]
 pub struct Sphere {
     pub radius: f32,
     pub center: Vector3,
     pub material: Material,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Plane {
     pub point: Vector3,
     pub normal: Vector3,
     pub material: Material,
 }
 
+#[derive(Serialize, Deserialize)]
 pub enum Object {
     Sphere(Sphere),
     Plane(Plane),

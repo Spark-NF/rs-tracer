@@ -1,7 +1,7 @@
 use std::ops::{Add, Mul};
 use image::{Pixel, Rgba};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub struct Color {
     pub r: f32,
     pub g: f32,

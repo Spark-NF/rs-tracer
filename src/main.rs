@@ -1,6 +1,10 @@
 extern crate image;
 extern crate clap;
 
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
+
 use std::fs::File;
 use std::path::Path;
 use clap::{App, Arg};
@@ -13,12 +17,13 @@ mod objects;
 mod vector3;
 
 use color::Color;
-use lights::{DirectionalLight, Light, PointLight};
+use lights::Light;
 use material::{Material, SurfaceType};
-use objects::{Object, Plane, Sphere};
+use objects::Object;
 use vector3::Vector3;
 
 
+#[derive(Serialize, Deserialize)]
 pub struct Scene {
     width: u32,
     height: u32,
@@ -130,6 +135,7 @@ fn render(scene: &Scene) -> DynamicImage {
 }
 
 fn main() {
+    // CLI usage configuration
     let matches = App::new("raytracer")
         .version("0.1.0")
         .about("Basic raytracer in Rust.")
@@ -140,61 +146,13 @@ fn main() {
             .index(1))
         .get_matches();
 
-    let scene = Scene {
-        width: 600,
-        height: 600,
-        lights: vec![
-            Light::DirectionalLight(DirectionalLight {
-                direction: Vector3 { x: -1.0, y: 3.0, z: -1.0 }.normalize(),
-                color: Color { r: 1.0, g: 1.0, b: 1.0 },
-                intensity: 0.8,
-            }),
-            Light::DirectionalLight(DirectionalLight {
-                direction: Vector3 { x: 1.0, y: 3.0, z: -1.0 }.normalize(),
-                color: Color { r: 1.0, g: 1.0, b: 1.0 },
-                intensity: 0.8,
-            }),
-            Light::PointLight(PointLight {
-                position: Vector3 { x: 0.5, y: 1.0, z: -1.0 },
-                color: Color { r: 1.0, g: 1.0, b: 0.0 },
-                intensity: 2.0,
-            }),
-        ],
-        items: vec![
-            Object::Sphere(Sphere {
-                radius: 0.3,
-                center: Vector3 { x: 1.0, y: 0.0, z: -1.0 },
-                material: Material {
-                    reflection: 1.0,
-                    color: Color { r: 0.0, g: 1.0, b: 0.0 },
-                    surface: SurfaceType::Diffuse,
-                },
-            }),
-            Object::Sphere(Sphere {
-                radius: 1.0,
-                center: Vector3 { x: 0.0, y: 0.0, z: -2.0 },
-                material: Material {
-                    reflection: 0.8,
-                    color: Color { r: 1.0, g: 0.0, b: 0.0 },
-                    surface: SurfaceType::Reflective { reflectivity: 0.5 },
-                },
-            }),
-            Object::Plane(Plane {
-                point: Vector3 { x: 0.0, y: 1.5, z: 0.0 },
-                normal: Vector3 { x: 0.0, y: 1.0, z: 0.0 },
-                material: Material {
-                    reflection: 0.5,
-                    color: Color { r: 0.0, g: 0.0, b: 1.0 },
-                    surface: SurfaceType::Diffuse,
-                },
-            }),
-        ],
-    };
+    // Parse scene file
+    let scene_path = matches.value_of("SCENE").unwrap();
+    let scene_file = File::open(scene_path).unwrap();
+    let scene: Scene = serde_json::from_reader(scene_file).unwrap();
 
-    println!("Start");
+    // Render scene to file
     let img = render(&scene);
-    println!("Finished!");
     let mut out = File::create(&Path::new("out.png")).unwrap();
     img.save(&mut out, image::ImageFormat::PNG).unwrap();
-    println!("Saved!");
 }
