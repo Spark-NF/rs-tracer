@@ -22,8 +22,8 @@ use vector3::Vector3;
 pub struct Scene {
     width: u32,
     height: u32,
-    lights: Vec<Box<Light>>,
-    items: Vec<Box<Object>>,
+    lights: Vec<Light>,
+    items: Vec<Object>,
 }
 
 pub struct Ray {
@@ -44,7 +44,7 @@ fn create_ray(x: u32, y: u32, width: u32, height: u32) -> Ray {
 
 pub struct Intersection<'a> {
     distance: f32,
-    item: &'a Box<Object>,
+    item: &'a Object,
 }
 
 impl Scene {
@@ -144,24 +144,24 @@ fn main() {
         width: 600,
         height: 600,
         lights: vec![
-            Box::new(DirectionalLight {
+            Light::DirectionalLight(DirectionalLight {
                 direction: Vector3 { x: -1.0, y: 3.0, z: -1.0 }.normalize(),
                 color: Color { r: 1.0, g: 1.0, b: 1.0 },
                 intensity: 0.8,
             }),
-            Box::new(DirectionalLight {
+            Light::DirectionalLight(DirectionalLight {
                 direction: Vector3 { x: 1.0, y: 3.0, z: -1.0 }.normalize(),
                 color: Color { r: 1.0, g: 1.0, b: 1.0 },
                 intensity: 0.8,
             }),
-            Box::new(PointLight {
+            Light::PointLight(PointLight {
                 position: Vector3 { x: 0.5, y: 1.0, z: -1.0 },
                 color: Color { r: 1.0, g: 1.0, b: 0.0 },
                 intensity: 2.0,
-            })
+            }),
         ],
         items: vec![
-            Box::new(Sphere {
+            Object::Sphere(Sphere {
                 radius: 0.3,
                 center: Vector3 { x: 1.0, y: 0.0, z: -1.0 },
                 material: Material {
@@ -170,7 +170,7 @@ fn main() {
                     surface: SurfaceType::Diffuse,
                 },
             }),
-            Box::new(Sphere {
+            Object::Sphere(Sphere {
                 radius: 1.0,
                 center: Vector3 { x: 0.0, y: 0.0, z: -2.0 },
                 material: Material {
@@ -179,7 +179,7 @@ fn main() {
                     surface: SurfaceType::Reflective { reflectivity: 0.5 },
                 },
             }),
-            Box::new(Plane {
+            Object::Plane(Plane {
                 point: Vector3 { x: 0.0, y: 1.5, z: 0.0 },
                 normal: Vector3 { x: 0.0, y: 1.0, z: 0.0 },
                 material: Material {
