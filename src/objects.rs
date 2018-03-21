@@ -17,9 +17,18 @@ pub struct Plane {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct Disc {
+    pub radius: f32,
+    pub center: Vector3,
+    pub normal: Vector3,
+    pub material: Material,
+}
+
+#[derive(Serialize, Deserialize)]
 pub enum Object {
     Sphere(Sphere),
     Plane(Plane),
+    Disc(Disc),
 }
 
 impl Object {
@@ -65,6 +74,26 @@ impl Object {
                 }
                 None
             },
+            Object::Disc(ref disc) => {
+                let demon = disc.normal.dot(&ray.direction);
+                if demon > 1e-6 {
+                    let v = Vector3 {
+                        x: disc.center.x - ray.origin.x,
+                        y: disc.center.y - ray.origin.y,
+                        z: disc.center.z - ray.origin.z,
+                    };
+                    let distance = v.dot(&disc.normal) / demon;
+                    if distance >= 0.0 {
+                        let hit = ray.origin + (ray.direction * distance);
+                        let v = hit - disc.center;
+                        let distance = v.dot(&v).sqrt();
+                        if distance <= disc.radius {
+                            return Some(distance)
+                        }
+                    }
+                }
+                None
+            },
         }
     }
 
@@ -72,6 +101,7 @@ impl Object {
         match *self {
             Object::Sphere(ref sphere) => (*point - sphere.center).normalize(),
             Object::Plane(ref plane) => -plane.normal,
+            Object::Disc(ref disc) => -disc.normal,
         }
     }
 
@@ -79,6 +109,7 @@ impl Object {
         match *self {
             Object::Sphere(ref sphere) => &sphere.material,
             Object::Plane(ref plane) => &plane.material,
+            Object::Disc(ref disc) => &disc.material,
         }
     }
 }
