@@ -141,9 +141,15 @@ fn main() {
         .about("Basic raytracer in Rust.")
         .author("Spark-NF")
         .arg(Arg::with_name("SCENE")
-            .help("Which scene file to load.")
+            .help("Which scene file to load")
             .required(true)
             .index(1))
+        .arg(Arg::with_name("out")
+            .short("o")
+            .long("out")
+            .help("The destination file for the raytracing output")
+            .takes_value(true)
+            .value_name("FILE"))
         .get_matches();
 
     // Parse scene file
@@ -153,6 +159,7 @@ fn main() {
 
     // Render scene to file
     let img = render(&scene);
-    let mut out = File::create(&Path::new("out.png")).unwrap();
+    let out_path = matches.value_of("out").unwrap_or("out.png");
+    let mut out = File::create(&Path::new(out_path)).unwrap();
     img.save(&mut out, image::ImageFormat::PNG).unwrap();
 }
