@@ -16,9 +16,16 @@ pub struct PointLight {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct AmbientLight {
+    pub color: Color,
+    pub intensity: f32,
+}
+
+#[derive(Serialize, Deserialize)]
 pub enum Light {
     DirectionalLight(DirectionalLight),
     PointLight(PointLight),
+    AmbientLight(AmbientLight),
 }
 
 impl Light {
@@ -26,6 +33,7 @@ impl Light {
         match *self {
             Light::DirectionalLight(ref directional) => &directional.color,
             Light::PointLight(ref point) => &point.color,
+            Light::AmbientLight(ref ambient) => &ambient.color,
         }
     }
 
@@ -33,6 +41,7 @@ impl Light {
         match *self {
             Light::DirectionalLight(ref directional) => -directional.direction,
             Light::PointLight(ref point) => (point.position - *hit).normalize(),
+            Light::AmbientLight(_) => Vector3 { x: 0.0, y: 0.0, z: 0.0 },
         }
     }
 
@@ -43,6 +52,7 @@ impl Light {
                 let squared_distance = (point.position - *hit).norm() as f32;
                 point.intensity / (4.0 * ::std::f32::consts::PI * squared_distance)
             },
+            Light::AmbientLight(ref ambient) => ambient.intensity,
         }
     }
 
@@ -50,6 +60,7 @@ impl Light {
         match *self {
             Light::DirectionalLight(_) => ::std::f32::INFINITY,
             Light::PointLight(ref point) => (point.position - *hit).len(),
+            Light::AmbientLight(_) => ::std::f32::INFINITY,
         }
     }
 }

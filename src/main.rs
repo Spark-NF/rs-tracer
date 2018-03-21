@@ -65,16 +65,19 @@ fn diffuse_color(scene: &Scene, hit: &Vector3, normal: &Vector3, material: &Mate
     let mut color = Color { r: 0.0, g: 0.0, b: 0.0 };
     for light in &scene.lights {
         let light_direction = light.get_direction(&hit);
-        let shadow_ray = Ray {
-            origin: *hit + (*normal * 1e-6),
-            direction: light_direction,
-        };
-        let between_light_and_object = scene.send_ray(&shadow_ray);
-        let light_power = if between_light_and_object.is_none() || between_light_and_object.unwrap().distance > light.get_distance(&hit) {
-            (normal.dot(&light_direction) as f32).max(0.0) * light.get_intensity(&hit)
+        let mut light_power = 0.0;
+        if light_direction.x == 0.0 && light_direction.y == 0.0 && light_direction.z == 0.0 {
+            light_power = light.get_intensity(&hit);
         } else {
-            0.0
-        };
+            let shadow_ray = Ray {
+                origin: *hit + (*normal * 1e-6),
+                direction: light_direction,
+            };
+            let between_light_and_object = scene.send_ray(&shadow_ray);
+            if between_light_and_object.is_none() || between_light_and_object.unwrap().distance > light.get_distance(&hit) {
+                light_power = (normal.dot(&light_direction) as f32).max(0.0) * light.get_intensity(&hit);
+            }
+        }
         let light_color = *light.get_color() * light_power * material.reflection;
         color = color + (material.color * light_color);
     }
