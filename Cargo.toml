@@ -4,4 +4,5 @@ version = "0.1.0"
 authors = ["Nicolas Faure <spark_ps@hotmail.fr>"]
 
 [dependencies]
-image = "*"
+image = "0.18"
+clap = "2.31"

@@ -1,7 +1,9 @@
 extern crate image;
+extern crate clap;
 
 use std::fs::File;
 use std::path::Path;
+use clap::{App, Arg};
 use image::{DynamicImage, GenericImage};
 
 mod color;
@@ -128,6 +130,16 @@ fn render(scene: &Scene) -> DynamicImage {
 }
 
 fn main() {
+    let matches = App::new("raytracer")
+        .version("0.1.0")
+        .about("Basic raytracer in Rust.")
+        .author("Spark-NF")
+        .arg(Arg::with_name("SCENE")
+            .help("Which scene file to load.")
+            .required(true)
+            .index(1))
+        .get_matches();
+
     let scene = Scene {
         width: 600,
         height: 600,
