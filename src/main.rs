@@ -8,7 +8,7 @@ extern crate serde_json;
 use std::fs::File;
 use std::path::Path;
 use clap::{App, Arg};
-use image::{DynamicImage, GenericImage};
+use image::{DynamicImage, GenericImage, Pixel, Rgba};
 
 mod color;
 mod lights;
@@ -115,9 +115,13 @@ fn cast_ray(scene: &Scene, ray: &Ray, depth: u32) -> Color {
         .unwrap_or(Color { r: 0.0, g: 0.0, b: 0.0 })
 }
 
+fn to_pixel(color: &Color) -> Rgba<u8> {
+    Rgba::from_channels((color.r * 255.0) as u8, (color.g * 255.0) as u8, (color.b * 255.0) as u8, 255)
+}
+
 fn render(scene: &Scene) -> DynamicImage {
     let mut img = DynamicImage::new_rgb8(scene.width, scene.height);
-    let black = Color { r: 0.0, g: 0.0, b: 0.0 }.to_pixel();
+    let black = to_pixel(&Color { r: 0.0, g: 0.0, b: 0.0 });
 
     for x in 0..scene.width {
         for y in 0..scene.height {
@@ -125,7 +129,7 @@ fn render(scene: &Scene) -> DynamicImage {
             let intersection = scene.send_ray(&ray);
 
             match intersection {
-                Some(i) => img.put_pixel(x, y, get_color(scene, &ray, &i, 0).to_pixel()),
+                Some(i) => img.put_pixel(x, y, to_pixel(&get_color(scene, &ray, &i, 0))),
                 None => img.put_pixel(x, y, black),
             }
         }
